@@ -12,5 +12,5 @@ filename="$HOME/.ssh/$1"
 ssh-keygen -t ed25519 -C "hannayjd@$HOSTNAME" -f "$filename"
 eval "$(ssh-agent -s)"
 ssh-add $filename
+echo "Add following public key to GitHub server at https://github.com/settings/keys"
 ssh-add -L
-
