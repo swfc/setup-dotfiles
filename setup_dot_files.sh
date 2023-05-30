@@ -1,6 +1,18 @@
 #!/bin/bash
 
 cd $HOME
+
+# check if zsh is installed
+if command -v zsh >/dev/null 2>&1; then
+    echo "zsh is already installed"
+else
+    echo "zsh is not installed, installing now..."
+    sudo apt update -y
+    sudo apt install -y zsh
+fi
+# change default shell
+chsh -s $(which zsh)
+
 # install oh-my-zsh
 sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
