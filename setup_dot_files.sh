@@ -10,8 +10,6 @@ else
     sudo apt update -y
     sudo apt install -y zsh
 fi
-# change default shell
-chsh -s $(which zsh)
 
 # install oh-my-zsh
 sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
