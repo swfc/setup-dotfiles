@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <title>Managing my dotfiles as a git repository</title>
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://drewdevault.com/blog/index.xml">
+  <link rel="icon" type="image/png" href="/avatar.png">
+  
+  <link rel="stylesheet" href="/main.min.fbee2ede33c02698d508178167c7556879b09625f70dfe0d8fa551c74788392f.css">
+</head>
+
+
+<h1>
+  Managing my dotfiles as a git repository
+  <small>
+    <span class="date">December 30, 2019</span>
+    on
+    <span class="site"><a href="https://drewdevault.com/">Drew DeVault&#39;s blog</a></span>
+  </small>
+</h1>
+
+<main>
+  <article>
+    <p>There are many tools for managing your dotfiles - user-specific configuration
+files. GNU stow is an example. I&rsquo;ve tried a few solutions over the years, but I
+settled on a very simple system several years ago which has served me very well
+in the time since: my $HOME is a git repository. <a href="https://git.sr.ht/~sircmpwn/dotfiles">This
+repository</a>, in fact. This isn&rsquo;t an
+original idea, but I&rsquo;m not sure where I first heard it from either, and I&rsquo;ve
+extended upon it somewhat since.</p>
+<p>The key to making this work well is my one-byte <code>.gitignore</code> file:</p>
+<pre><code>*
+</code></pre><p>With this line, and git will ignore all of the files in my $HOME directory, so I
+needn&rsquo;t worry about leaving personal files, music, videos, other git
+repositories, and so on, in my public dotfiles repo. But, in order to track
+anything at all, we need to override the gitignore file on a case-by-case basis
+with <code>git add -f</code>, or <code>--force</code>. To add my vimrc, I used the following command:</p>
+<pre><code>git add -f .vimrc
+</code></pre><p>Then I can commit and push normally, and .vimrc is tracked by git. The gitignore
+file does not apply to any files which are already being tracked by git, so any
+future changes to my vimrc show up in git status, git diff, etc, and can be
+easilly committed with <code>git commit -a</code>, or added to the staging area normally
+with <code>git add</code> — using <code>-f</code> is no longer necessary. Setting up a new
+machine is quite easy. After the installation, I run the following commands:</p>
+<pre><code>cd ~
+git init
+git remote add origin git@git.sr.ht:~sircmpwn/dotfiles
+git fetch
+git checkout -f master
+</code></pre><p>A quick log-out and back in and I feel right at $HOME. Additionally, I have
+configured $HOME as a prefix, so that ~/bin is full of binaries, ~/lib has
+libraries, and so on; though I continue to use ~/.config rather than ~/etc. I
+put $HOME/bin ahead of anything else in my path, which allows me to shadow
+system programs with wrapper scripts as necessary. For example, ~/bin/xdg-open
+is as follows:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="cp">#!/bin/sh
+</span><span class="cp"></span><span class="k">case</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">1</span><span class="p">%%:*</span><span class="si">}</span><span class="s2">&#34;</span> in
+	http<span class="p">|</span>https<span class="p">|</span>*.pdf<span class="o">)</span>
+		<span class="nb">exec</span> qutebrowser <span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span>
+		<span class="p">;;</span>
+	mailto<span class="o">)</span>
+		<span class="nb">exec</span> aerc <span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span>
+		<span class="p">;;</span>
+	*<span class="o">)</span>
+		<span class="nb">exec</span> /usr/bin/xdg-open <span class="s2">&#34;</span><span class="nv">$@</span><span class="s2">&#34;</span>
+		<span class="p">;;</span>
+<span class="k">esac</span>
+</code></pre></div><p>Replacing the needlessly annoying-to-customize xdg-open with one that just
+does what I want, falling back to /usr/bin/xdg-open if necessary. Many other
+non-shadowed scripts and programs are found in ~/bin as well.</p>
+<p>However, not all of my computers are configured equally. Some run different
+Linux (or non-Linux) distributions, or have different concerns being desktops,
+servers, laptops, phones, etc. It&rsquo;s often useful for this reason to be able to
+customize my configuration for each host. For example, before $HOME/bin in my
+$PATH, I have $HOME/bin/$(hostname). I also run several machines on
+different architectures, so I include $HOME/bin/$(uname -m)<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> as well. To
+customize my sway configuration to consider the different device configurations
+of each host, I use the following directive in ~/.config/sway/config:</p>
+<pre><code>include ~/.config/sway/`hostname`
+</code></pre><p>Then I have a host-specific configuration there, also tracked by git so I can
+conveniently update one machine from another. I take a similar approach to
+per-host configuration for many other pieces of software I use.</p>
+<p>Rather than using (and learning) any specialized tools, I find my needs quite
+adequately satisfied by a simple composition of several Unix primitives with a
+tool I&rsquo;m already very familiar with: git. Version controlling your configuration
+files is a desirable trait even with other systems, so why not ditch the
+middleman?</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><code>uname -m</code> prints out the system architecture. Try it for yourself, I bet it&rsquo;ll read &ldquo;x86_64&rdquo; or maybe &ldquo;aarch64&rdquo;. <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+
+  </article>
+</main>
+
+<section class="webring">
+  <h2>
+    Articles from blogs I read
+    <small class="attribution">
+      Generated by
+      <a href="https://git.sr.ht/~sircmpwn/openring">openring</a>
+    </small>
+  </h2>
+  <section class="articles">
+    
+    <div class="article">
+      <h4 class="title">
+        <a href="https://go.dev/blog/go1.21rc" target="_blank" rel="noopener">Go 1.21 Release Candidate</a>
+      </h4>
+      <p class="summary">Go 1.21 RC brings language improvements, new standard library packages, PGO GA, backward and forward compatibility in the toolchain and faster builds.</p>
+      <small class="source">
+        via <a href="https://blog.golang.org/feed.atom">The Go Blog</a>
+      </small>
+      <small class="date">June 21, 2023</small>
+    </div>
+    
+    <div class="article">
+      <h4 class="title">
+        <a href="https://emersion.fr/blog/2023/status-update-54/" target="_blank" rel="noopener">Status update, June 2023</a>
+      </h4>
+      <p class="summary">Hi!
+This month Rose Hudson has started working on wlroots as part of Google Summer
+of Code! She will focus on reducing frame latency by implementing an adaptive
+frame scheduler. She already has landed new wlroots APIs to
+measure render time. You can follow Ro…</p>
+      <small class="source">
+        via <a href="https://emersion.fr/blog/">emersion</a>
+      </small>
+      <small class="date">June 15, 2023</small>
+    </div>
+    
+    <div class="article">
+      <h4 class="title">
+        <a href="https://100r.co/site/log.html#may2023" target="_blank" rel="noopener">Summary of changes for May 2023</a>
+      </h4>
+      <p class="summary">
+Hey everyone! This is the list of all the changes we&#39;ve done to our projects and apps during the month of May. We&#39;ll also be reporting in our on position in the world, and on our future plans.
+
+Summary Of Changes
+
+  100r.co, updated {jib_cars} (2023.0…</p>
+      <small class="source">
+        via <a href="https://100r.co">Hundred Rabbits</a>
+      </small>
+      <small class="date">May 1, 2023</small>
+    </div>
+    
+  </section>
+</section>
+
+
+<footer>
+  The content for this site is
+  <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>.
+  The <a href="https://git.sr.ht/~sircmpwn/drewdevault.com">code for this site</a>
+  is <a href="https://opensource.org/licenses/MIT">MIT</a>.
+</footer>
+
