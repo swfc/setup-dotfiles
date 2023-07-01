@@ -1,4 +1,4 @@
-# ssh-setup
+# setup-dotfiles
 [See this file for how it works](dotfiles.html)
 ## How to use
 First set up ssh keys and then add it to the GitHub public key.
