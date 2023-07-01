@@ -19,6 +19,11 @@ wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
 chmod +x install.sh
 ./install.sh --skip-chsh --unattended
 
+# modify ls aliases
+sed -i -e "s/l='ls -lah'/l='ls -lh'/" \
+       -e "s/ll='ls -lh'/ll='ls -lah'/" $DIR/.oh-my-zsh/lib/directories.zsh
+
+
 # install custom plugins
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-$DIR/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-$DIR/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
