@@ -24,6 +24,15 @@ chmod +x install.sh
 # modify ls aliases
 sed -i -e "s/ll='ls -l'/ll='ls -laFh'/" $DIR/.oh-my-zsh/plugins/common-aliases/common-aliases.plugin.zsh
 
+# append micromamba aliases
+cat <<EOT >> $DIR/.oh-my-zsh/plugins/common-aliases/common-aliases.plugin.zsh
+
+# micromamba aliases
+alias mm='micromamba'
+alias mma='micromamba activate'
+alias mmd='micromamba deactivate'
+EOT
+
 # install custom plugins
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-$DIR/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-$DIR/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
