@@ -12,17 +12,17 @@ else
     sudo apt update -y
     sudo apt install -y zsh
 fi
+
 # set ZSH
 ZSH=$DIR/.oh-my-zsh
+
 # install oh-my-zsh
 wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
 chmod +x install.sh
 ./install.sh --skip-chsh --unattended
 
 # modify ls aliases
-sed -i -e "s/l='ls -lah'/l='ls -lh'/" \
-       -e "s/ll='ls -lh'/ll='ls -lah'/" $DIR/.oh-my-zsh/lib/directories.zsh
-
+sed -i -e "s/ll='ls -l'/ll='ls -laFh'/" $DIR/.oh-my-zsh/plugins/common-aliases/common-aliases.plugin.zsh
 
 # install custom plugins
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-$DIR/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
